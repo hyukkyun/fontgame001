@@ -36,6 +36,27 @@ export default function App() {
     status: 'IDLE',
   });
 
+  useEffect(() => {
+    if (gameState.status === 'PLAYING') {
+      const currentQuiz = gameState.quizzes[gameState.currentQuizIndex];
+      const nextQuiz = gameState.quizzes[gameState.currentQuizIndex + 1];
+
+      const loadFont = (family: string) => {
+        document.fonts.load(`1em '${family}'`).catch(() => {});
+      };
+
+      if (currentQuiz) {
+        currentQuiz.options.forEach(opt => loadFont(opt.family));
+        loadFont(currentQuiz.answer.family);
+      }
+      
+      if (nextQuiz) {
+        nextQuiz.options.forEach(opt => loadFont(opt.family));
+        loadFont(nextQuiz.answer.family);
+      }
+    }
+  }, [gameState.currentQuizIndex, gameState.status, gameState.quizzes]);
+
   const generateQuizzes = useCallback(() => {
     const shuffledFonts = shuffle(NOONNU_FONTS);
     const shuffledWords = shuffle(POPULAR_WORDS);
@@ -70,11 +91,6 @@ export default function App() {
       userAnswers: [],
       quizzes: quizzes,
       status: 'PLAYING',
-    });
-    
-    // Preload fonts for all questions in the background
-    quizzes.forEach(quiz => {
-      document.fonts.load(`1em '${quiz.answer.family}'`).catch(() => {});
     });
   };
 
