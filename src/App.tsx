@@ -62,13 +62,19 @@ export default function App() {
   }, []);
 
   const startGame = () => {
+    const quizzes = generateQuizzes();
     setGameState({
       currentQuizIndex: 0,
       score: 0,
       scoreList: [],
       userAnswers: [],
-      quizzes: generateQuizzes(),
+      quizzes: quizzes,
       status: 'PLAYING',
+    });
+    
+    // Preload fonts for all questions in the background
+    quizzes.forEach(quiz => {
+      document.fonts.load(`1em '${quiz.answer.family}'`).catch(() => {});
     });
   };
 
@@ -162,7 +168,7 @@ export default function App() {
                 className="flex flex-col items-center text-center space-y-8"
               >
                 <p className="text-[10px] uppercase tracking-[0.4em] font-bold opacity-30">당신의 안목을 테스트하세요</p>
-                <h1 style={{ fontFamily: 'MemomentKukkuk' }} className="text-blue-600 text-6xl md:text-[100px] leading-none mb-4 tracking-normal">
+                <h1 style={{ fontFamily: 'MemomentKukkuk' }} className="text-red-600 text-6xl md:text-[100px] leading-none mb-4 tracking-normal">
                   폰트오락실
                 </h1>
                 <p className="max-w-xl text-sm font-medium leading-relaxed opacity-40 mb-8 px-4">
