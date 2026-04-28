@@ -402,5 +402,35 @@ export const NOONNU_FONTS: FontInfo[] = [
     name: '창원단감아삭체',
     family: 'ChangwonDangamAsak',
     css: "@font-face { font-family: 'ChangwonDangamAsak'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/CWDangamAsac-Bold.woff') format('woff'); font-weight: normal; font-style: normal; }",
+  },
+  {
+    id: 'okgung',
+    name: 'OK궁',
+    family: 'OKGUNG',
+    css: "@font-face { font-family: 'OKGUNG'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/OKGUNG.woff2') format('woff2'); font-weight: 400; font-style: normal; }",
+  },
+  {
+    id: 'hs-gooltokki',
+    name: 'HS굴토끼체',
+    family: 'HSGooltokki',
+    css: "@font-face { font-family: 'HSGooltokki'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-2@1.0/HSGooltokki.woff2') format('woff2'); font-weight: 400; font-style: normal; }",
+  },
+  {
+    id: 'hs-jandari',
+    name: 'HS잔다리체',
+    family: 'HSJandari',
+    css: "@font-face { font-family: 'HSJandari'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2510-2@1.0/HSJandari.woff2') format('woff2'); font-weight: 400; font-style: normal; }",
+  },
+  {
+    id: 'knps-odaesan',
+    name: '국립공원 오대산체',
+    family: 'KNPSOdaesan-Regular',
+    css: "@font-face { font-family: 'KNPSOdaesan-Regular'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2510-2@1.0/KNPSOdaesan-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; }",
+  },
+  {
+    id: 'gabia-dunn',
+    name: '가비아 던체',
+    family: 'GabiaDunn-Regular',
+    css: "@font-face { font-family: 'GabiaDunn-Regular'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2510-1@1.0/GabiaDunn-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; }",
   }
 ];
