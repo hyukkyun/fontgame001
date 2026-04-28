@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'MemomentKukkuk';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2508-2@1.0/memomentKkukKkuk.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Bold Typography Styles */
+.decorative-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.decorative-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  border-bottom: 1px solid #000;
+}
+
+.decorative-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  border-left: 1px solid #000;
+}
+
+/* Custom layout helpers */
+.vertical-label {
+  writing-mode: vertical-rl;
+}
+
+.btn-bold {
+  @apply bg-black text-white px-8 py-4 text-sm font-black uppercase tracking-widest transition-all hover:bg-zinc-800 active:scale-95 cursor-pointer;
+}
+
+.btn-outline-bold {
+  @apply border-2 border-black px-8 py-4 text-sm font-black uppercase tracking-widest transition-all hover:bg-black hover:text-white active:scale-95 cursor-pointer;
+}
