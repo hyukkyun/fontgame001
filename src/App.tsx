@@ -76,9 +76,14 @@ export default function App() {
     const pickedFonts = shuffledFonts.slice(0, QUIZ_COUNT);
     
     const newQuizzes: Quiz[] = pickedFonts.map((font, idx) => {
-      // Pick 3 random wrong fonts
-      const otherFonts = NOONNU_FONTS.filter(f => f.id !== font.id);
-      const wrongOptions = shuffle(otherFonts).slice(0, OPTIONS_COUNT - 1);
+      // Pick 3 random wrong fonts efficiently without shuffling the whole array
+      const wrongOptions: typeof NOONNU_FONTS = [];
+      while (wrongOptions.length < OPTIONS_COUNT - 1) {
+        const randomFont = NOONNU_FONTS[Math.floor(Math.random() * NOONNU_FONTS.length)];
+        if (randomFont.id !== font.id && !wrongOptions.find(f => f.id === randomFont.id)) {
+          wrongOptions.push(randomFont);
+        }
+      }
       
       const options = shuffle([font, ...wrongOptions]);
       
@@ -95,8 +100,27 @@ export default function App() {
     return newQuizzes;
   }, []);
 
+  const [preloadedQuizzes, setPreloadedQuizzes] = useState<Quiz[] | null>(null);
+
+  useEffect(() => {
+    if (gameState.status === 'IDLE' && !preloadedQuizzes) {
+      const quizzes = generateQuizzes();
+      setPreloadedQuizzes(quizzes);
+      
+      // Eagerly tell the browser to load the first font and its options
+      const firstQuiz = quizzes[0];
+      const loadFont = (family: string) => {
+        document.fonts.load(`1em '${family}'`).catch(() => {});
+      };
+      
+      firstQuiz.options.forEach(opt => loadFont(opt.family));
+      loadFont(firstQuiz.answer.family);
+    }
+  }, [gameState.status, preloadedQuizzes, generateQuizzes]);
+
   const startGame = () => {
-    const quizzes = generateQuizzes();
+    const quizzes = preloadedQuizzes || generateQuizzes();
+    setPreloadedQuizzes(null);
     setGameState({
       currentQuizIndex: 0,
       score: 0,
