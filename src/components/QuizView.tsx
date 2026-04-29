@@ -63,24 +63,28 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
     if (!isFontLoaded) return;
     
     setTimeLeft(10);
-    let timeoutId: number | NodeJS.Timeout;
+    const startTime = Date.now();
+    const duration = 10000;
+    
     const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          timeoutId = setTimeout(() => {
-            onAnswerRef.current(null);
-          }, 1000);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const elapsed = Date.now() - startTime;
+      const remainingMs = duration - elapsed;
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      
+      if (remainingSec <= 0) {
+        clearInterval(interval);
+        setTimeLeft(0);
+        
+        // Wait just a tiny bit at 0 to let user see it, then proceed
+        setTimeout(() => {
+          onAnswerRef.current(null);
+        }, 300);
+      } else {
+        setTimeLeft(remainingSec);
+      }
+    }, 100);
 
-    return () => {
-      clearInterval(interval);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
+    return () => clearInterval(interval);
   }, [quiz.id, isFontLoaded]);
 
   // Inject the specific @font-face for this question locally as well to ensure it's loaded
@@ -173,10 +177,13 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
               <span>남은 시간</span>
               <span className={timeLeft <= 3 ? 'text-red-500 opacity-100' : ''}>{timeLeft}초</span>
             </div>
-            <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden">
-              <div 
-                className={`h-full transition-all duration-1000 ease-linear ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black'}`}
-                style={{ width: `${(timeLeft / 10) * 100}%` }}
+            <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden relative">
+              <motion.div 
+                key={`${quiz.id}-timer`}
+                className={`absolute top-0 left-0 h-full ${timeLeft <= 3 ? 'bg-red-500 transition-colors' : 'bg-black'}`}
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: 10, ease: "linear" }}
               />
             </div>
           </div>
