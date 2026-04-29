@@ -49,10 +49,13 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
   const handleDownload = async () => {
     if (shareRef.current === null) return;
     try {
+      await document.fonts.load("1em 'Maruminya'");
       const dataUrl = await toPng(shareRef.current, { cacheBust: true, width: 1080, height: 1920 });
       
-      // Try Web Share API with files first (great for iOS "Save Image")
-      if (navigator.canShare) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      // Try Web Share API with files first (great for iOS "Save Image") - ONLY ON MOBILE
+      if (isMobile && navigator.canShare) {
         try {
           const res = await fetch(dataUrl);
           const blob = await res.blob();
@@ -179,36 +182,64 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
       <div className="fixed top-[-9999px] left-[-9999px]">
         <div 
           ref={shareRef}
-          className="w-[1080px] h-[1920px] bg-black p-12 flex flex-col items-center justify-between text-white font-sans"
-          style={{ backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(255,100,0,0.1) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(0,200,255,0.1) 0%, transparent 50%)' }}
+          className="w-[1080px] h-[1920px] bg-white flex flex-col items-center text-black"
+          style={{ fontFamily: "'Maruminya', sans-serif" }}
         >
-          <div className="flex flex-col items-center mt-24">
-            <div className="px-10 py-4 mb-12 text-5xl font-black tracking-widest text-black bg-white" style={{ fontFamily: 'MemomentKukkuk' }}>폰트오락실</div>
-            <h2 className="text-7xl font-black text-center text-gray-400 uppercase tracking-tighter">최종 결과 리포트</h2>
+          {/* Top Header */}
+          <div className="flex flex-col items-center mt-40 mb-20 text-center">
+            <div className="text-4xl tracking-widest mb-6">(FINAL FONT REPORT)</div>
+            <div className="text-[120px] font-black leading-tight tracking-tight">폰트오락실</div>
+            <div className="text-[100px] font-black leading-tight tracking-tight">최종결과</div>
           </div>
 
-          <div className="flex flex-col items-center">
-            <div className="relative mb-24">
-              <div className="absolute inset-0 bg-white blur-[120px] opacity-20"></div>
-              <h1 className="relative font-black text-[500px] leading-none mb-4">{score} <span className="text-8xl opacity-30">/{total}</span></h1>
-            </div>
-            <p className="max-w-4xl text-6xl font-bold text-center leading-[1.2] px-12 whitespace-pre-line">
+          {/* Central Box */}
+          <div className="relative border-[8px] border-black w-[840px] h-[780px] flex flex-col items-center justify-center text-center bg-white my-6">
+            {/* Corner Markers */}
+            <div className="absolute top-6 left-6 w-8 h-8 border-t-[8px] border-l-[8px] border-black" />
+            <div className="absolute top-6 right-6 w-8 h-8 border-t-[8px] border-r-[8px] border-black" />
+            <div className="absolute bottom-6 left-6 w-8 h-8 border-b-[8px] border-l-[8px] border-black" />
+            <div className="absolute bottom-6 right-6 w-8 h-8 border-b-[8px] border-r-[8px] border-black" />
+
+            <div className="text-[300px] leading-none mb-12 mt-4 font-black">{score}</div>
+            <p className="text-[55px] font-bold leading-snug whitespace-pre-line tracking-tight px-8 mb-4">
               {scoreMessage}
             </p>
           </div>
 
-          <div className="flex flex-col items-center mb-24">
-            <div className="grid grid-cols-5 gap-8 mb-24">
-              {scoreList.map((correct, i) => (
-                <div 
-                  key={i} 
-                  className={`w-32 h-32 flex items-center justify-center rounded-3xl border-4 text-6xl font-black ${correct ? 'bg-green-500 border-green-500 text-green-500' : 'bg-red-500 border-red-500 text-red-500'}`}
-                >
-                  {correct ? '✓' : '✗'}
-                </div>
-              ))}
+          {/* Result Barcode */}
+          <div className="flex gap-3 mt-28 mb-16">
+            {scoreList.map((correct, i) => (
+              <div 
+                key={i} 
+                className={`w-[36px] h-[160px] ${correct ? 'bg-black' : 'border-[6px] border-black bg-white'}`}
+              />
+            ))}
+          </div>
+
+          {/* Date & Time */}
+          <div className="text-[42px] tracking-widest font-bold">
+            {new Date().getFullYear()}-{new Date().getMonth() + 1}-{new Date().getDate()} - {new Date().getHours().toString().padStart(2, '0')}:{new Date().getMinutes().toString().padStart(2, '0')}
+          </div>
+
+          {/* Footer Info */}
+          <div className="flex flex-col items-center mt-auto mb-20 text-[40px] leading-relaxed tracking-widest">
+            <p className="mb-2">game.beyondbetterbrand.com</p>
+            <p>insta @beyondbetterbrand</p>
+            <div className="mt-12 opacity-100 relative">
+              <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 201.26 216.24" width="80" height="86">
+                <g id="w4eCZE">
+                  <g>
+                    <path fill="black" d="M112.43,194.14c-1.37-.02-2.75.01-4.12,0v-35.53c-1.49-.44-2.85-.08-4.33,0v35.53h-4.12v-35.32c-.16-.06-.26.22-.33.22h-3.79v10.18h-3.79l-.33.33v3.9l-.33.33h-3.68c-.84,1.18-.46,2.77-.54,4.12h-3.79l-.33.33v3.68c-1.06.76-2.66-.01-3.9.54v4.33h-8.45v4.12h-21.02v-4.12h-7.58v-4.12s-.24.04-.36-.08-.06-.36-.08-.36h-3.68v-3.36c0-.06-.62-.59-.43-.98h-3.9v-3.79s-.68-.54-.76-.54h-3.58v-8.02h-4.01l-.33-.33v-25.57l.33-.33h4.01v-4.55h4.12v-8.13l.33-.33h4.01v-3.79l-.33-.28c-.09,0-.16.17-.22.17h-15.6c-.98-1.18.6-3.1-.43-4.33h-7.91c-.19-1.48.74-2.58.43-4.12h-4.77v-4.33h-4.33v-4.33c-.84-.68-4.33.44-4.52-.34l.19-21.11h4.33v-7.69c0-.2.11-.84.33-.98h3.68l.33-.33v-4.01h4.12v-4.01l.33-.33h7.8l.33-.33v-4.01h35.97v4.01l.33.33h8.78v-4.55h-4.55v-8.34l-.33-.28c-.09,0-.16.17-.22.17h-3.9l-.33-.33v-8.34h-4.33v-25.89c0-.6,1.32-.12,1.63-.11.52.02,2.92.18,2.92-.54v-4.66h4.55v-4.55h4.55v-4.44l.33-.28c.09,0,.16.17.22.17h3.79V0l27.3.11v4.44h4.23l.33.33v4.44h4.33l.25,4.3,4.95.25v4.44c0,.06.26.74.35.77,1-.04,2,.02,3-.01.28,0,1.41-.45,1.41.11v12.57l.33.33h4.12l.33-.33v-3.9c0-.08-.38-.24.11-.54h4.23v-4.23l.33-.33h8.56v-4.23l.33-.33h22.43v4.55l4.33.22v4.01l.33.33h4.12l.33.33v4.12l.33.33h4.01v8.56l.33.33h4.01v25.46l-.33.33h-4.01v8.45h-4.12v4.55h-4.55c-.91,1.5-.53,3.1-.87,4.77h18.63v4.33h8.13l.33.33v4.01h4.12v4.12h4.12v4.01l.33.33h4.01v16.47h-4.01l-.33.33v4.01h-4.12v4.12h-4.12v4.33h-8.23v4.33h4.12v4.33h4.01l.33.33v21.45l-.33.33h-3.68l-.33.33v8.13h-4.12v4.12h-4.12v4.12h-4.12v4.12c-1.3.11-2.46.42-3.76.02l-.35.31v4.01h-8.45v4.12h-21.45v-4.12h-8.45v-4.01l-.33-.33h-4.01v-4.12h-4.12v-4.12h-4.33v-4.12h-4.55c0,8.01,0,16.04,0,24.05,1.37.02,2.75-.01,4.12,0v22.1h-8.23v-4.33h4.12c0-5.92,0-11.85,0-17.77ZM104.19,67.17v-3.79l-.33-.33h-12.03v4.12l-4.12.22-.22,7.8h-4.12v34.23h4.12l.22,8.02h4.12v4.12h12.13c.54-1.37-.18-2.7,0-4.12h4.01l.33-.33v-7.69h4.12l.22-33.58h-4.33v-8.34l-.33-.33h-3.79ZM144.93,75.62v-4.01l-.33-.33h-10.29v4.33l-4.33.22v8.67h-4.12v30.33l4.02.42.31,6.95h4.33v4.12c.28-.12.64.22.76.22h9.64v-4.33h4.12v-7.37h4.12v-30.33h-3.79l-.33-.33v-8.56h-4.12ZM129.54,134.34h-33.37v4.01l-.34.3c-1.35-.51-2.62.1-3.99.02v11.48l3.9.22v4.12h33.8v-4.01l.33-.33h3.79v-11.48h-4.12v-4.33Z"/>
+                    <polygon fill="black" points="108.09 194.14 108.09 211.69 103.98 211.69 104.19 194.14 108.09 194.14"/>
+                    <path fill="white" d="M104.19,67.17h3.79l.33.33v8.34h4.33l-.22,33.58h-4.12v7.69l-.33.33h-4.01c-.18,1.42.54,2.75,0,4.12h-12.13v-4.12h-4.12l-.22-8.02h-4.12v-34.23h4.12l.22-7.8,4.12-.22v-4.12h12.03l.33.33v3.79ZM107.66,96.64h-8.23c-.15,1.41-.66,2.61-.43,4.12h-2.82s0,7.69,0,7.69c0,.07-.3.31-.22.54l3.87.46.46,3.66,4.51-.05c.9-1.21,1.5-2.24,1.76-3.76l1.97-.09c-.04-2.84.37-5.61,0-8.45h-.87s0-4.12,0-4.12Z"/>
+                    <path fill="white" d="M144.93,75.62h4.12v8.56l.33.33h3.79v30.33h-4.12v7.37h-4.12v4.33h-9.64c-.12,0-.48-.33-.76-.22v-4.12h-4.33l-.31-6.95-4.02-.42v-30.33h4.12v-8.67l4.33-.22v-4.33h10.29l.33.33v4.01ZM144.93,101.62h-4.77v4.01l-.33.33h-3.79v8.67h4.12v3.47h5.85c-.04-1.34,1.02-2.21,1.33-3.43l1.7-.03v-8.67h-3.79l-.33-.33v-4.01Z"/>
+                    <path fill="white" d="M129.54,134.34v4.33h4.12v11.48h-3.79l-.33.33v4.01h-33.8v-4.12l-3.9-.22v-11.48c1.37.08,2.64-.53,3.99-.02l.34-.3v-4.01h33.37Z"/>
+                    <path fill="black" d="M107.66,96.64v4.12h.87c.37,2.84-.04,5.61,0,8.45l-1.97.09c-.26,1.52-.87,2.55-1.76,3.76l-4.51.05-.46-3.66-3.87-.46c-.08-.23.22-.47.22-.54v-7.69h2.82c-.23-1.5.28-2.71.43-4.12h8.23Z"/>
+                    <path fill="black" d="M144.93,101.62v4.01l.33.33h3.79v8.67l-1.7.03c-.31,1.22-1.37,2.1-1.33,3.43h-5.85v-3.47h-4.12v-8.67h3.79l.33-.33v-4.01h4.77Z"/>
+                  </g>
+                </g>
+              </svg>
             </div>
-            <div className="text-4xl font-black tracking-widest opacity-20 uppercase">{window.location.host}</div>
           </div>
         </div>
       </div>
