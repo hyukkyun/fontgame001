@@ -14,6 +14,8 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
   const [isFontLoaded, setIsFontLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [timeLeft, setTimeLeft] = useState(10);
+  const [timeProgress, setTimeProgress] = useState(1);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const onAnswerRef = useRef(onAnswer);
 
   useEffect(() => {
@@ -21,8 +23,10 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
   }, [onAnswer]);
 
   useEffect(() => {
+    // Reset state for new quiz
     setIsFontLoaded(false);
     setLoadError(false);
+    setSelectedOptionId(null);
     
     let mounted = true;
     const triggerLoad = async () => {
@@ -63,34 +67,55 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
     if (!isFontLoaded) return;
     
     setTimeLeft(10);
+    setTimeProgress(1);
     const startTime = Date.now();
     const duration = 10000;
     
-    const interval = setInterval(() => {
+    let animationFrameId: number;
+    let isFinished = false;
+
+    const animateTimer = () => {
+      // If user selected an answer, stop timer
+      if (selectedOptionId || isFinished) return;
+
       const elapsed = Date.now() - startTime;
       const remainingMs = duration - elapsed;
-      const remainingSec = Math.ceil(remainingMs / 1000);
       
-      if (remainingSec <= 0) {
-        clearInterval(interval);
+      if (remainingMs <= 0) {
+        setTimeProgress(0);
         setTimeLeft(0);
+        isFinished = true;
         
         // Wait just a tiny bit at 0 to let user see it, then proceed
         setTimeout(() => {
           onAnswerRef.current(null);
         }, 300);
       } else {
-        setTimeLeft(remainingSec);
+        setTimeProgress(remainingMs / duration);
+        setTimeLeft(Math.ceil(remainingMs / 1000));
+        animationFrameId = requestAnimationFrame(animateTimer);
       }
-    }, 100);
+    };
+    
+    animationFrameId = requestAnimationFrame(animateTimer);
 
-    return () => clearInterval(interval);
-  }, [quiz.id, isFontLoaded]);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [quiz.id, isFontLoaded, selectedOptionId]);
 
   // Inject the specific @font-face for this question locally as well to ensure it's loaded
   const currentFontCss = quiz.answer.css;
   const weightMatch = currentFontCss.match(/font-weight:\s*([^;]+)/);
   const fontWeight = weightMatch ? weightMatch[1].trim() : 'normal';
+
+  const handleOptionClick = (option: FontInfo) => {
+    if (selectedOptionId) return; // Prevent double click
+    setSelectedOptionId(option.id);
+    
+    // Provide a small visual delay for mobile feedback
+    setTimeout(() => {
+      onAnswerRef.current(option);
+    }, 450);
+  };
 
   return (
     <div className="flex flex-col items-center w-full max-w-5xl mx-auto py-6 h-full min-h-[500px]">
@@ -153,21 +178,35 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
       <div className="w-full max-w-md space-y-2 mt-auto">
         <p className="text-[10px] text-center uppercase tracking-[0.2em] font-black opacity-20 mb-2">정답이라고 생각하는 폰트 이름을 선택하세요</p>
         <div className="grid grid-cols-1 gap-2">
-          {quiz.options.map((option, idx) => (
-            <motion.button
-              key={option.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => onAnswer(option)}
-              className="w-full text-left py-3 px-2 border-b-2 border-zinc-100 hover:border-black transition-all group flex items-center justify-between cursor-pointer"
-            >
-              <span className="text-lg sm:text-xl font-bold tracking-tight group-hover:translate-x-2 transition-transform duration-300">
-                {option.name}
-              </span>
-              <span className="text-[10px] font-black uppercase opacity-0 group-hover:opacity-100 transition-opacity">선택</span>
-            </motion.button>
-          ))}
+          {quiz.options.map((option, idx) => {
+            const isSelected = selectedOptionId === option.id;
+            const isOtherSelected = selectedOptionId !== null && !isSelected;
+            
+            return (
+              <motion.button
+                key={option.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => handleOptionClick(option)}
+                disabled={selectedOptionId !== null}
+                className={`w-full text-left py-3 px-3 sm:px-4 transition-all group flex items-center justify-between cursor-pointer rounded-lg border-2 ${
+                  isSelected 
+                    ? 'border-black bg-black text-white scale-[0.98]' 
+                    : isOtherSelected 
+                      ? 'border-zinc-100 opacity-40 grayscale pointer-events-none'
+                      : 'border-zinc-100 hover:border-black active:scale-[0.98]'
+                }`}
+              >
+                <span className={`text-lg sm:text-xl font-bold tracking-tight transition-transform duration-300 ${isSelected ? 'translate-x-2' : 'group-hover:translate-x-2'}`}>
+                  {option.name}
+                </span>
+                <span className={`text-[10px] font-black uppercase transition-opacity ${isSelected ? 'opacity-100 text-white' : 'opacity-0 group-hover:opacity-100'}`}>
+                  {isSelected ? '선택됨' : '선택'}
+                </span>
+              </motion.button>
+            );
+          })}
         </div>
 
         {/* Timer */}
@@ -178,12 +217,9 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
               <span className={timeLeft <= 3 ? 'text-red-500 opacity-100' : ''}>{timeLeft}초</span>
             </div>
             <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden relative">
-              <motion.div 
-                key={`${quiz.id}-timer`}
-                className={`absolute top-0 left-0 h-full ${timeLeft <= 3 ? 'bg-red-500 transition-colors' : 'bg-black'}`}
-                initial={{ width: '100%' }}
-                animate={{ width: '0%' }}
-                transition={{ duration: 10, ease: "linear" }}
+              <div 
+                className={`absolute top-0 left-0 h-full origin-left will-change-transform ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black'}`}
+                style={{ transform: `scaleX(${timeProgress})` }}
               />
             </div>
           </div>
