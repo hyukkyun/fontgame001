@@ -218,7 +218,7 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
             </div>
             <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden relative">
               <div 
-                className={`absolute top-0 left-0 h-full origin-left will-change-transform ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black'}`}
+                className={`absolute top-0 left-0 w-full h-full origin-left will-change-transform ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black'}`}
                 style={{ transform: `scaleX(${timeProgress})` }}
               />
             </div>
