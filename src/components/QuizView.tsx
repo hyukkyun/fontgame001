@@ -120,17 +120,17 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
   return (
     <div className="flex flex-col items-center w-full max-w-5xl mx-auto py-6 h-full min-h-[500px]">
       <div className="flex w-full justify-between items-center px-4 mb-4">
-        <div className="font-bold text-sm bg-black text-white px-3 py-1 rounded-full tracking-wider">
+        <div className="font-bold text-sm bg-black dark:bg-white text-white dark:text-[#1A1A1A] px-3 py-1 rounded-full tracking-wider transition-colors">
           SCORE {score}
         </div>
-        <div className="font-bold text-sm text-zinc-500 tracking-widest bg-zinc-100 px-3 py-1 rounded-full">
+        <div className="font-bold text-sm text-zinc-500 dark:text-zinc-400 tracking-widest bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full transition-colors">
           {currentIndex + 1} / {totalQuizzes}
         </div>
       </div>
 
       <style key={quiz.answer.id} dangerouslySetInnerHTML={{ __html: currentFontCss }} />
       
-      <div className="text-center space-y-4 mb-4 flex-1 flex flex-col justify-center w-full px-2 text-black">
+      <div className="text-center space-y-4 mb-4 flex-1 flex flex-col justify-center w-full px-2 text-black dark:text-white transition-colors">
         <p className="text-[10px] uppercase tracking-[0.3em] font-black opacity-30">이 폰트의 이름은 무엇일까요?</p>
         
         {/* Display Word */}
@@ -167,7 +167,7 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
               exit={{ opacity: 0 }}
               className="flex flex-col items-center justify-center py-10"
             >
-              <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mb-4" />
+              <div className="w-12 h-12 border-4 border-black dark:border-white border-t-transparent dark:border-t-transparent rounded-full animate-spin mb-4" />
               <p className="text-[10px] font-black uppercase tracking-widest opacity-20">폰트를 불러오는 중...</p>
             </motion.div>
           )}
@@ -192,16 +192,16 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
                 disabled={selectedOptionId !== null}
                 className={`w-full text-left py-3 px-3 sm:px-4 transition-all group flex items-center justify-between cursor-pointer rounded-lg border-2 ${
                   isSelected 
-                    ? 'border-black bg-black text-white scale-[0.98]' 
+                    ? 'border-black dark:border-white bg-black dark:bg-white text-white dark:text-[#1A1A1A] scale-[0.98]' 
                     : isOtherSelected 
-                      ? 'border-zinc-100 opacity-40 grayscale pointer-events-none'
-                      : 'border-zinc-100 hover:border-black active:scale-[0.98]'
+                      ? 'border-zinc-100 dark:border-zinc-800 opacity-40 grayscale pointer-events-none'
+                      : 'border-zinc-100 dark:border-zinc-800 hover:border-black dark:hover:border-white active:scale-[0.98]'
                 }`}
               >
                 <span className={`text-lg sm:text-xl font-bold tracking-tight transition-transform duration-300 ${isSelected ? 'translate-x-2' : 'group-hover:translate-x-2'}`}>
                   {option.name}
                 </span>
-                <span className={`text-[10px] font-black uppercase transition-opacity ${isSelected ? 'opacity-100 text-white' : 'opacity-0 group-hover:opacity-100'}`}>
+                <span className={`text-[10px] font-black uppercase transition-opacity ${isSelected ? 'opacity-100 text-white dark:text-[#1A1A1A]' : 'opacity-0 group-hover:opacity-100'}`}>
                   {isSelected ? '선택됨' : '선택'}
                 </span>
               </motion.button>
@@ -216,9 +216,9 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
               <span>남은 시간</span>
               <span className={timeLeft <= 3 ? 'text-red-500 opacity-100' : ''}>{timeLeft}초</span>
             </div>
-            <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden relative">
+            <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden relative transition-colors">
               <div 
-                className={`absolute top-0 left-0 w-full h-full origin-left will-change-transform ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black'}`}
+                className={`absolute top-0 left-0 w-full h-full origin-left will-change-transform ${timeLeft <= 3 ? 'bg-red-500' : 'bg-black dark:bg-white transition-colors'}`}
                 style={{ transform: `scaleX(${timeProgress})` }}
               />
             </div>

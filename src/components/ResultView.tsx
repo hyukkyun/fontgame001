@@ -100,7 +100,7 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
         animate={{ opacity: 1, scale: 1 }}
         className="w-full text-center py-6"
       >
-        <span className="text-[10px] font-black tracking-[0.4em] text-gray-400 uppercase">최종 정답률</span>
+        <span className="text-[10px] font-black tracking-[0.4em] text-gray-400 dark:text-zinc-500 uppercase">최종 정답률</span>
         <h1 className="my-4 text-[100px] leading-none font-black tracking-tighter">
           {score}<span className="text-4xl opacity-20 italic"> / {total}</span>
         </h1>
@@ -124,12 +124,12 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
         </div>
 
         <div className="text-left w-full space-y-4 mb-8">
-          <h2 className="text-lg font-black border-b-2 border-black pb-2 mb-4">상세 결과</h2>
+          <h2 className="text-lg font-black border-b-2 border-black dark:border-white pb-2 mb-4 transition-colors">상세 결과</h2>
           {quizzes.map((quiz, idx) => {
             const isCorrect = scoreList[idx];
             const userAnswer = userAnswers[idx];
             return (
-              <div key={idx} className="flex flex-col bg-zinc-50 border border-zinc-200 p-4 rounded-xl">
+              <div key={idx} className="flex flex-col bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 p-4 rounded-xl transition-colors">
                 <div className="flex items-center gap-2 mb-3">
                   {isCorrect ? (
                     <CheckCircle2 className="text-green-500 w-5 h-5" />
@@ -155,17 +155,17 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
                   {quiz.word}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm bg-white p-3 rounded-lg border border-zinc-100 shadow-sm">
+                <div className="grid grid-cols-2 gap-4 text-sm bg-white dark:bg-[#1A1A1A] p-3 rounded-lg border border-zinc-100 dark:border-zinc-800 shadow-sm transition-colors">
                   <div>
-                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">정답</span>
-                    <span className="font-bold flex items-center gap-2 text-green-700">
+                    <span className="block text-[10px] text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-wider mb-1">정답</span>
+                    <span className="font-bold flex items-center gap-2 text-green-700 dark:text-green-400">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                       {quiz.answer.name}
                     </span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">내가 선택한 폰트</span>
-                    <span className={`font-bold flex items-center gap-2 ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
+                    <span className="block text-[10px] text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-wider mb-1">내가 선택한 폰트</span>
+                    <span className={`font-bold flex items-center gap-2 ${isCorrect ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}></div>
                       {userAnswer?.name || '시간 초과'}
                     </span>

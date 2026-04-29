@@ -16,7 +16,7 @@ const AdminView: React.FC<AdminViewProps> = ({ onBack }) => {
   );
 
   return (
-    <div className="min-h-screen bg-white p-8 md:p-12">
+    <div className="min-h-screen bg-transparent p-8 md:p-12 text-[#1A1A1A] dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
           <div>
@@ -40,7 +40,7 @@ const AdminView: React.FC<AdminViewProps> = ({ onBack }) => {
                 });
                 alert('모든 폰트 로드를 시도합니다.');
               }}
-              className="px-6 py-3 bg-black text-white text-xs font-black rounded-full hover:bg-zinc-800 transition-colors"
+              className="px-6 py-3 bg-black dark:bg-white text-white dark:text-[#1A1A1A] text-xs font-black rounded-full hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
             >
               모든 폰트 불러오기
             </button>
@@ -51,7 +51,7 @@ const AdminView: React.FC<AdminViewProps> = ({ onBack }) => {
               placeholder="폰트 이름 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-6 py-3 bg-zinc-50 border border-zinc-200 rounded-full w-full md:w-80 outline-none focus:border-black transition-colors"
+              className="pl-12 pr-6 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-full w-full md:w-80 outline-none focus:border-black dark:focus:border-white transition-colors"
             />
           </div>
         </div>
@@ -68,12 +68,12 @@ const AdminView: React.FC<AdminViewProps> = ({ onBack }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.01 }}
-                className="p-6 border border-zinc-100 bg-zinc-50/50 rounded-2xl hover:border-black transition-colors group"
+                className="p-6 border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50 rounded-2xl hover:border-black dark:hover:border-zinc-500 transition-colors group"
               >
                 <style dangerouslySetInnerHTML={{ __html: font.css }} />
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black p-1 px-2 bg-black text-white rounded">#{idx + 1}</span>
+                    <span className="text-[10px] font-black p-1 px-2 bg-black dark:bg-zinc-700 text-white rounded transition-colors">#{idx + 1}</span>
                     <FontStatus family={font.family} weight={weight} />
                   </div>
                 </div>
@@ -101,7 +101,7 @@ const AdminView: React.FC<AdminViewProps> = ({ onBack }) => {
                           alert('URL이 복사되었습니다.');
                         }
                       }}
-                      className="ml-2 hover:text-black transition-colors font-bold"
+                      className="ml-2 hover:text-black dark:hover:text-white transition-colors font-bold"
                     >
                       COPY
                     </button>

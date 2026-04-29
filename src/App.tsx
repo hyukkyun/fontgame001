@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Sparkles, Type, Gamepad2 } from 'lucide-react';
+import { Play, Sparkles, Type, Gamepad2, Moon, Sun } from 'lucide-react';
 import { GameState, Quiz, FontInfo } from './types/game';
 import { NOONNU_FONTS } from './constants/fonts';
 import { POPULAR_WORDS } from './constants/words';
@@ -27,6 +27,19 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export default function App() {
+  const [isDark, setIsDark] = useState(() => {
+    return document.documentElement.classList.contains('dark') || 
+           window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
   const [gameState, setGameState] = useState<GameState>({
     currentQuizIndex: 0,
     score: 0,
@@ -123,7 +136,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen font-sans bg-white text-[#1A1A1A] overflow-hidden">
+    <div className="relative min-h-screen font-sans bg-white dark:bg-[#1A1A1A] text-[#1A1A1A] dark:text-white overflow-hidden transition-colors duration-300">
       <FontLoader />
       
       {/* Background Decorative Element */}
@@ -133,13 +146,22 @@ export default function App() {
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Header */}
         <header className="flex justify-between items-center p-8 md:p-12 z-50">
-          <button 
-            onClick={() => setGameState(prev => ({ ...prev, status: 'IDLE' }))}
-            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <div className="w-8 h-8 bg-black flex items-center justify-center text-white"><Gamepad2 size={16} /></div>
-            <span style={{ fontFamily: 'MemomentKukkuk', fontSize: '1.25rem' }} className="font-black tracking-widest hidden sm:block">폰트오락실</span>
-          </button>
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => setGameState(prev => ({ ...prev, status: 'IDLE' }))}
+              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="w-8 h-8 bg-black dark:bg-white flex items-center justify-center text-white dark:text-[#1A1A1A] transition-colors duration-300"><Gamepad2 size={16} /></div>
+              <span style={{ fontFamily: 'MemomentKukkuk', fontSize: '1.25rem' }} className="font-black tracking-widest hidden sm:block">폰트오락실</span>
+            </button>
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="opacity-40 hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
           
           <AnimatePresence mode="wait">
             {gameState.status === 'PLAYING' && (
@@ -248,7 +270,7 @@ export default function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="w-full fixed inset-0 z-[100] bg-white overflow-auto"
+                className="w-full fixed inset-0 z-[100] bg-white dark:bg-[#1A1A1A] overflow-auto transition-colors duration-300"
               >
                 <AdminView onBack={() => setGameState(prev => ({ ...prev, status: 'IDLE' }))} />
               </motion.div>
@@ -258,11 +280,11 @@ export default function App() {
 
         {/* Sidebar Label (Desktop Only) */}
         <div className="absolute right-8 md:right-12 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-10">
-          <div className="h-20 w-px bg-zinc-200"></div>
+          <div className="h-20 w-px bg-zinc-200 dark:bg-zinc-800"></div>
           <p className="vertical-label text-[10px] font-bold uppercase tracking-widest opacity-40">
             당신의 결과를 SNS에 공유해보세요
           </p>
-          <div className="h-20 w-px bg-zinc-200"></div>
+          <div className="h-20 w-px bg-zinc-200 dark:bg-zinc-800"></div>
         </div>
 
         {/* Footer */}
