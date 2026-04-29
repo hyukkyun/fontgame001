@@ -23,6 +23,21 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
   }, [onAnswer]);
 
   useEffect(() => {
+    const familyQuery = `1em '${quiz.answer.family}'`;
+    let initiallyLoaded = false;
+    try {
+      initiallyLoaded = document.fonts.check(familyQuery);
+    } catch {
+      // ignore
+    }
+
+    if (initiallyLoaded) {
+      setIsFontLoaded(true);
+      setLoadError(false);
+      setSelectedOptionId(null);
+      return;
+    }
+
     // Reset state for new quiz
     setIsFontLoaded(false);
     setLoadError(false);
@@ -31,23 +46,25 @@ const QuizView: React.FC<QuizViewProps> = ({ quiz, onAnswer, currentIndex, total
     let mounted = true;
     const triggerLoad = async () => {
       try {
-        await document.fonts.ready;
         // Try to load the font family. We use a short timeout to not block forever.
-        const family = `'${quiz.answer.family}'`;
-        
         try {
           // Attempt to load
           await Promise.race([
-            document.fonts.load(`1em ${family}`),
+            document.fonts.load(familyQuery),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
           ]);
         } catch (e) {
-          console.warn(`Font ${family} load attempt failed or timed out`, e);
+          console.warn(`Font load attempt failed or timed out`, e);
         }
 
         if (mounted) {
           // Check if it's actually loaded now
-          const isLoaded = document.fonts.check(`1em ${family}`);
+          let isLoaded = false;
+          try {
+            isLoaded = document.fonts.check(familyQuery);
+          } catch {
+            isLoaded = true;
+          }
           setIsFontLoaded(true);
           if (!isLoaded) setLoadError(true);
         }

@@ -59,12 +59,10 @@ export default function App() {
       };
 
       if (currentQuiz) {
-        currentQuiz.options.forEach(opt => loadFont(opt.family));
         loadFont(currentQuiz.answer.family);
       }
       
       if (nextQuiz) {
-        nextQuiz.options.forEach(opt => loadFont(opt.family));
         loadFont(nextQuiz.answer.family);
       }
     }
@@ -107,13 +105,12 @@ export default function App() {
       const quizzes = generateQuizzes();
       setPreloadedQuizzes(quizzes);
       
-      // Eagerly tell the browser to load the first font and its options
+      // Eagerly tell the browser to load the first font
       const firstQuiz = quizzes[0];
       const loadFont = (family: string) => {
         document.fonts.load(`1em '${family}'`).catch(() => {});
       };
       
-      firstQuiz.options.forEach(opt => loadFont(opt.family));
       loadFont(firstQuiz.answer.family);
     }
   }, [gameState.status, preloadedQuizzes, generateQuizzes]);
@@ -227,6 +224,7 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center text-center space-y-8"
               >
                 <p className="text-[10px] uppercase tracking-[0.4em] font-bold opacity-30">당신의 안목을 테스트하세요</p>
@@ -257,6 +255,7 @@ export default function App() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
                 className="w-full"
               >
                 <QuizView 
@@ -275,6 +274,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
                 className="w-full"
               >
                 <ResultView 
