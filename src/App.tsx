@@ -280,6 +280,9 @@ export default function App() {
                 @beyondbetterbrand
               </a>
             </p>
+            <p className="text-[10px] leading-relaxed font-bold opacity-40 mt-1 break-keep">
+              버그발견, 폰트추천, 제안 및 협업은 인스타그램 DM이나 beyondbetterbrand@gmail.com 으로 메일보내주세요.
+            </p>
           </div>
           
           <div className="flex items-center gap-6">

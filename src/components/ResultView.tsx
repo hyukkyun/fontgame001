@@ -50,6 +50,28 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
     if (shareRef.current === null) return;
     try {
       const dataUrl = await toPng(shareRef.current, { cacheBust: true, width: 1080, height: 1920 });
+      
+      // Try Web Share API with files first (great for iOS "Save Image")
+      if (navigator.canShare) {
+        try {
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const file = new File([blob], 'font-master-result.png', { type: 'image/png' });
+          
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: '폰트오락실 결과',
+              text: '나의 폰트 안목을 확인해보세요!'
+            });
+            return; // Successfully shared/saved
+          }
+        } catch (e) {
+          console.warn('Share API with file failed, falling back to download link', e);
+        }
+      }
+
+      // Fallback for desktop/Android or if Share fails
       const link = document.createElement('a');
       link.download = 'font-master-result.png';
       link.href = dataUrl;
@@ -59,10 +81,14 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
     }
   };
 
-  const scoreMessage = score === total ? "완벽해요! 당신은 폰트 마스터!" : 
-                       score >= total * 0.7 ? "대단해요! 폰트에 대해 잘 아시네요." :
-                       score >= total * 0.4 ? "나쁘지 않아요! 조금 더 연습해볼까요?" :
-                       "폰트의 세계는 넓답니다. 다시 도전해보세요!";
+  const getScoreMessage = () => {
+    if (score === total) return "레전드 클리어 \uD83D\uDD79\uFE0F\n당신은 폰트오락실의 살아있는 전설입니다.";
+    if (score >= 7) return "폰트 좀 아는 사람이네요 \uD83C\uDFAE\n거의 다 왔어요, 만점까지 한 걸음!";
+    if (score >= 4) return "감각은 있어요! 조금만 더 다듬으면 됩니다 \uD83D\uDD79\uFE0F";
+    return "동전 한 번 더 넣으세요 \uD83E\uDE99\n폰트오락실은 누구에게나 열려있습니다.";
+  };
+
+  const scoreMessage = getScoreMessage();
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl px-4 py-8 mx-auto -mt-8">
@@ -75,7 +101,7 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
         <h1 className="my-4 text-[100px] leading-none font-black tracking-tighter">
           {score}<span className="text-4xl opacity-20 italic"> / {total}</span>
         </h1>
-        <p className="mb-8 text-xl font-bold tracking-tight">{scoreMessage}</p>
+        <p className="mb-8 text-xl font-bold tracking-tight whitespace-pre-line">{scoreMessage}</p>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center mb-8">
           <button 
@@ -166,7 +192,7 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
               <div className="absolute inset-0 bg-white blur-[120px] opacity-20"></div>
               <h1 className="relative font-black text-[500px] leading-none mb-4">{score} <span className="text-8xl opacity-30">/{total}</span></h1>
             </div>
-            <p className="max-w-4xl text-6xl font-bold text-center leading-[1.2] px-12">
+            <p className="max-w-4xl text-6xl font-bold text-center leading-[1.2] px-12 whitespace-pre-line">
               {scoreMessage}
             </p>
           </div>
