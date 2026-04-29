@@ -9,7 +9,6 @@ import { Play, Sparkles, Type, Gamepad2, Moon, Sun } from 'lucide-react';
 import { GameState, Quiz, FontInfo } from './types/game';
 import { NOONNU_FONTS } from './constants/fonts';
 import { POPULAR_WORDS } from './constants/words';
-import FontLoader from './components/FontLoader';
 import QuizView from './components/QuizView';
 import ResultView from './components/ResultView';
 import AdminView from './components/AdminView';
@@ -158,8 +157,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen font-sans bg-white dark:bg-[#1A1A1A] text-[#1A1A1A] dark:text-white overflow-hidden transition-colors duration-300">
-      <FontLoader />
-      
       {/* Background Decorative Element */}
       {gameState.status !== 'PLAYING' && <div className="decorative-grid" />}
 
