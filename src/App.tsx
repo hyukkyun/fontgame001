@@ -140,7 +140,7 @@ export default function App() {
       <FontLoader />
       
       {/* Background Decorative Element */}
-      <div className="decorative-grid" />
+      {gameState.status !== 'PLAYING' && <div className="decorative-grid" />}
 
       {/* Main Layout Container */}
       <div className="relative z-10 flex flex-col min-h-screen">
