@@ -193,15 +193,18 @@ const ResultView: React.FC<ResultViewProps> = ({ score, total, scoreList, userAn
           </div>
 
           {/* Central Box */}
-          <div className="relative border-[8px] border-black w-[840px] h-[780px] flex flex-col items-center justify-center text-center bg-white my-6">
+          <div 
+            className="relative border-[8px] border-black w-[840px] h-[780px] flex flex-col items-center justify-center text-center my-6 overflow-hidden"
+            style={{ backgroundColor: score === total ? '#ffe108' : 'white' }}
+          >
             {/* Corner Markers */}
             <div className="absolute top-6 left-6 w-8 h-8 border-t-[8px] border-l-[8px] border-black" />
             <div className="absolute top-6 right-6 w-8 h-8 border-t-[8px] border-r-[8px] border-black" />
             <div className="absolute bottom-6 left-6 w-8 h-8 border-b-[8px] border-l-[8px] border-black" />
             <div className="absolute bottom-6 right-6 w-8 h-8 border-b-[8px] border-r-[8px] border-black" />
 
-            <div className="text-[300px] leading-none mb-12 mt-4 font-black">{score}</div>
-            <p className="text-[55px] font-bold leading-snug whitespace-pre-line tracking-tight px-8 mb-4">
+            <div className="text-[280px] leading-none mb-8 mt-4 font-black">{score}</div>
+            <p className="text-[48px] font-bold leading-snug whitespace-pre-line tracking-tight px-12 mb-4 shrink-0 break-keep">
               {scoreMessage}
             </p>
           </div>
